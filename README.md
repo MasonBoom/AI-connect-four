@@ -12,4 +12,4 @@ To run this program on your local machine after installing the files, run "pytho
 
 Here is a preview of the two bots competing with each other.
 
-![i]()
+![i](https://github.com/MasonBoom/Two-AI-connect-four/blob/main/script.py%20-%20Connect%20Four%20AI%20-%20Visual%20Studio%20Code%202_4_2022%206_27_39%20AM.png?raw=true)
