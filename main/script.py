@@ -35,9 +35,6 @@ def game():
     else:
         print("It's a tie!")
 
-def random_eval(board):
-  return random.randint(-100, 100)
-
 def evaluate_board(board):
   if has_won(board, 'X'):
     return float('inf')
