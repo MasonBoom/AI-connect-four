@@ -217,6 +217,25 @@ def minimax(input_board, is_maximizing, depth, alpha, beta, eval_function):
       if alpha >= beta:
         break
     return [best_value, best_move]
+def evaluate_board(board):
+    if has_won(board, "X"):
+        return float("Inf")
+    elif has_won(board, "O"):
+        return -float("Inf")
+
+    score = 0
+    center_column = len(board) // 2
+
+    for row in range(len(board[0])):
+        if board[center_column][row] == "X":
+            score += 3
+        elif board[center_column][row] == "O":
+            score -= 3
+
+    x_streaks = count_streaks(board, "X")
+    o_streaks = count_streaks(board, "O")
+
+    return (x_streaks * 2) - (o_streaks * 3)
 
 def play_game(ai):
     BOARDWIDTH = 7
@@ -240,7 +259,7 @@ def play_game(ai):
                 good_move = True
         select_space(board, int(choice), "X")
         if not game_is_over(board):
-          result = minimax(board, False, ai, -float("Inf"), float("Inf"))
+          result = minimax(board, False, ai, -float("Inf"), float("Inf"), evaluate_board)
           print("Computer chose: ", result[1])
           select_space(board, result[1], "O")
 

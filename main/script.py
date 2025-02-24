@@ -34,21 +34,6 @@ def game():
         print("AI (O) won. Better luck next time!")
     else:
         print("It's a tie!")
-
-def evaluate_board(board):
-  if has_won(board, 'X'):
-    return float('inf')
-  elif has_won(board, 'O'):
-    return -float('inf')
-  x_two_streak = 0
-  o_two_streak = 0
-  for col in range(len(board) - 1):
-    for row in range(len(board[0])):
-      if board[col][row] == 'X' and board[col + 1][row] == 'X':
-        x_two_streak += 1
-      elif board[col][row] == 'O' and board[col + 1][row] == 'O':
-        o_two_streak += 1
-  return x_two_streak - o_two_streak
   
 game()
 
