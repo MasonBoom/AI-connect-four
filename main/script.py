@@ -38,5 +38,3 @@ def game():
 game()
 
 new_board = make_board()
-
-
