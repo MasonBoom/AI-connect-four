@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "request": "launch",
+            "name": "Launch JavaFX",
+            "mainClass": "TestJavaFX",
+            "vmArgs": "--module-path C:/javafx/lib --add-modules javafx.controls,javafx.fxml"
+        }
+    ]
+}
