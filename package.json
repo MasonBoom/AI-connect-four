@@ -1,0 +1,36 @@
+{
+  "name": "fourfold-connect-four",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "prepare:engine": "node scripts/prepare-engine.mjs",
+    "predev": "npm run prepare:engine",
+    "dev": "next dev --webpack",
+    "prebuild": "npm run prepare:engine",
+    "build": "next build --webpack",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/game.test.ts && node --test tests/engine.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/press-start-2p": "5.3.0",
+    "@fontsource/space-grotesk": "5.3.0",
+    "lucide-react": "0.468.0",
+    "next": "16.4.6",
+    "pyodide": "0.27.7",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "0.187.0",
+    "typescript": "~5.9.3"
+  },
+  "type": "module"
+}
