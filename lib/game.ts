@@ -35,6 +35,7 @@ export function newMatch(starter: Player): Match {
     line: [],
   };
 }
+
 export function initialState(): State {
   return {
     match: newMatch('X'),
@@ -51,7 +52,6 @@ export function nextRow(board: Board, col: number) {
   return board[col].lastIndexOf(' ');
 }
 
-// Return every connected winning cell, including a move completing two lines.
 function winningCells(board: Board, move: Move): Point[] {
   const wins = new Map<number, Point>();
   for (const [dx, dy] of [
@@ -74,6 +74,7 @@ function winningCells(board: Board, move: Move): Point[] {
   }
   return [...wins.values()];
 }
+
 export function play(match: Match, col: number, player: Player): Match {
   if (match.winner || match.turn !== player) return match;
   const row = nextRow(match.board, col);
@@ -87,6 +88,7 @@ export function play(match: Match, col: number, player: Player): Match {
   const winner = line.length ? player : moves.length === ROWS * COLS ? 'draw' : null;
   return { ...match, board, moves, line, winner, turn: player === 'X' ? 'O' : 'X' };
 }
+
 export type Action =
   | { type: 'move'; col: number; player: Player }
   | { type: 'first'; value: Player }
@@ -137,6 +139,7 @@ export function saveGame(state: State) {
     }),
   );
 }
+
 export function loadGame(): State {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return initialState();

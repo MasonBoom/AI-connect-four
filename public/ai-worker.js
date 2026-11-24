@@ -1,4 +1,3 @@
-/* The board is column-major, exactly as in main/connect_four.py. */
 let enginePromise;
 function loadEngine() {
   if (!enginePromise) {
