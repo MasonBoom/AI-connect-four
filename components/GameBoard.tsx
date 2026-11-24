@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { COLS, nextRow, type Match } from '../lib/game';
+import { COLS, nextRow, type Match, type Player } from '../lib/game';
 import type { ColumnArea, Tabletop } from '../lib/tabletop';
 import Landscape from './Landscape';
 import { projectedCell, projectedColumn } from '../lib/board-view';
@@ -11,6 +11,9 @@ type Props = {
   aim: number | null;
   setAim: (col: number | null) => void;
   drop: (col: number) => void;
+  inputPlayer: Player | null;
+  hintColumn?: number | null;
+  labels?: Record<Player, string>;
 };
 
 function FallbackBoard({ match, aim }: Pick<Props, 'match' | 'aim'>) {
@@ -22,7 +25,7 @@ function FallbackBoard({ match, aim }: Pick<Props, 'match' | 'aim'>) {
     previousCount.current = count;
   }, [match.moves.length]);
   const targetRow =
-    aim !== null && !match.winner && match.turn === 'X' ? nextRow(match.board, aim) : -1;
+    aim !== null ? nextRow(match.board, aim) : -1;
   const target = aim !== null && targetRow >= 0 ? projectedCell(aim, targetRow) : null;
   return (
     <div className="model-frame model-poster" aria-hidden="true">
@@ -56,23 +59,30 @@ function FallbackBoard({ match, aim }: Pick<Props, 'match' | 'aim'>) {
           );
         })}
         {target && (
-          <i className="poster-ghost" style={{ left: target.x + '%', top: target.y + '%' }} />
+          <i className={'poster-ghost ' + match.turn} style={{ left: target.x + '%', top: target.y + '%' }} />
         )}
       </div>
     </div>
   );
 }
 
-export default function GameBoard({ match, aim, setAim, drop }: Props) {
+const matchLabels: Record<Player, string> = { X: 'you', O: 'computer' };
+
+export default function GameBoard({
+  match, aim, setAim, drop, inputPlayer, hintColumn = null, labels = matchLabels,
+}: Props) {
+  const controls = useRef<HTMLDivElement>(null);
+  const canDrop = !match.winner && match.turn === inputPlayer;
+  const preview = canDrop ? aim ?? hintColumn : null;
   const host = useRef<HTMLDivElement>(null);
   const stage = useRef<Tabletop | null>(null);
-  const latest = useRef({ match, aim });
+  const latest = useRef({ match, aim: preview });
   const previous = useRef(match);
   const [areas, setAreas] = useState<ColumnArea[] | null>(null);
   // Keep an already-playable board on screen while the GPU module loads.
   useEffect(() => {
-    latest.current = { match, aim };
-  }, [match, aim]);
+    latest.current = { match, aim: preview };
+  }, [match, preview]);
   useEffect(() => {
     let active = true;
     const fallback = () => {
@@ -107,14 +117,50 @@ export default function GameBoard({ match, aim, setAim, drop }: Props) {
     previous.current = match;
   }, [match]);
   useEffect(() => {
-    stage.current?.setAim(aim);
-  }, [aim]);
+    stage.current?.setAim(preview);
+  }, [preview]);
+
+  useEffect(() => {
+    if (!canDrop) return;
+    function onKey(event: KeyboardEvent) {
+      if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || event.repeat) return;
+      const target = event.target;
+      if (!(target instanceof Element) || target.closest('input, select, textarea, [contenteditable="true"]')) return;
+      if (/^[1-7]$/.test(event.key)) {
+        event.preventDefault();
+        drop(Number(event.key) - 1);
+        return;
+      }
+      const onBoard = controls.current?.contains(target);
+      if (target.closest('button, a') && !onBoard) return;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        let col = aim ?? Math.floor(COLS / 2);
+        if (aim !== null || nextRow(match.board, col) < 0) {
+          const step = event.key === 'ArrowRight' ? 1 : COLS - 1;
+          for (let i = 0; i < COLS; i++) {
+            col = (col + step) % COLS;
+            if (nextRow(match.board, col) >= 0) break;
+          }
+        }
+        controls.current?.querySelector<HTMLButtonElement>('[data-column="' + col + '"]')
+          ?.focus({ preventScroll: true });
+        setAim(col);
+      } else if (event.key === 'Enter' && preview !== null && !onBoard) {
+        event.preventDefault();
+        drop(preview);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [aim, canDrop, drop, match.board, preview, setAim]);
   return (
     <div className="stage" aria-label="Connect Four board">
       <Landscape />
-      {!areas && <FallbackBoard match={match} aim={aim} />}
+      {!areas && <FallbackBoard match={match} aim={preview} />}
       <div ref={host} className="webgl-surface" />
       <div
+        ref={controls}
         className={'column-controls' + (areas ? ' projected' : ' flat-controls')}
         role="group"
         aria-label="Choose a column"
@@ -122,11 +168,12 @@ export default function GameBoard({ match, aim, setAim, drop }: Props) {
         {Array.from({ length: COLS }, (_, col) => {
           const area = areas?.[col] ?? projectedColumn(col);
           const full = nextRow(match.board, col) < 0;
-          const disabled = full || !!match.winner || match.turn !== 'X';
+          const disabled = full || !canDrop;
+          const hinted = hintColumn === col && canDrop;
           const stack = match.board[col]
             .filter((p) => p !== ' ')
             .reverse()
-            .map((p) => (p === 'X' ? 'you' : 'computer'))
+            .map((p) => labels[p])
             .join(', ');
           return (
             <button
@@ -139,9 +186,9 @@ export default function GameBoard({ match, aim, setAim, drop }: Props) {
                 (col + 1) +
                 ', ' +
                 (stack ? 'bottom to top: ' + stack : 'empty') +
-                (full ? ', full' : '')
+                (full ? ', full' : '') + (hinted ? ', suggested column' : '')
               }
-              className={'column-target' + (!disabled && aim === col ? ' selected' : '')}
+              className={'column-target' + (!disabled && aim === col ? ' selected' : '') + (hinted ? ' hinted' : '')}
               style={{
                 left: area.left + '%',
                 top: area.top + '%',

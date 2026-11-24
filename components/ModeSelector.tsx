@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, GraduationCap, LockKeyhole, Play } from 'lucide-react';
+import { ArrowRight, GraduationCap, Play } from 'lucide-react';
 
 export default function ModeSelector() {
   const surface = useRef<HTMLDivElement>(null);
@@ -34,7 +34,8 @@ export default function ModeSelector() {
       aria-label="Game mode"
       onSubmit={(event) => {
         event.preventDefault();
-        router.push('/play/');
+        const { submitter } = event.nativeEvent as SubmitEvent;
+        router.push(submitter === coach.current ? '/coach/' : '/play/');
       }}
     >
       <div className="mode-keys">
@@ -55,18 +56,18 @@ export default function ModeSelector() {
         </button>
         <button
           ref={coach}
-          type="button"
+          type="submit"
+          formAction="/coach/"
           className="mode-key coach-key"
           aria-labelledby="coach-label"
           aria-describedby="coach-detail"
-          disabled
         >
           <span className="key-symbol" aria-hidden="true"><GraduationCap /></span>
           <span className="key-copy">
             <strong id="coach-label">Coach Mode</strong>
-            <small id="coach-detail">Coming soon</small>
+            <small id="coach-detail">Guided tactics practice</small>
           </span>
-          <LockKeyhole className="key-end" aria-hidden="true" />
+          <ArrowRight className="key-end" aria-hidden="true" />
         </button>
       </div>
     </form>

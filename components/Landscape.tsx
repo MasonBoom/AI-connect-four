@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 
-// Low-resolution scenery and integer steps give the horizon a pixel-art silhouette.
 export default function Landscape() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -232,6 +231,7 @@ export default function Landscape() {
       ctx.lineTo(x, h);
       ctx.stroke();
     }
+
     for (const y of [236, 238, 242, 247, 254, 264, 277, 294, 316, 345]) {
       ctx.globalAlpha = y < 253 ? 0.34 : 0.57;
       ctx.fillRect(0, y, w, 1);
@@ -241,6 +241,7 @@ export default function Landscape() {
       ctx.lineTo(w, y);
       ctx.stroke();
     }
+
     ctx.globalAlpha = 1;
     const vignette = ctx.createLinearGradient(0, 0, w, 0);
     vignette.addColorStop(0, '#170f2928');

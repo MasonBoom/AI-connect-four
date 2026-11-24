@@ -4,7 +4,6 @@ import ModeSelector from '../components/ModeSelector';
 import { projectedCell } from '../lib/board-view';
 import './welcome.css';
 
-// Bottom-to-top stacks on the decorative board, from the leftmost column.
 const displayColumns = ['O', 'X', 'XO', 'OXO', 'XOXX', 'O', ''];
 
 export default function WelcomePage() {

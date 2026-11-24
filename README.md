@@ -26,7 +26,7 @@ Open [localhost:3000](http://localhost:3000). The app serves its own fonts, Pyth
 
 ## How to play
 
-Select **Play Connect Four** on the welcome screen to start or resume a match. **Coach Mode** is marked *Coming soon*. Select **Main menu** above the game board to return to the welcome screen.
+Select **Play Connect Four** on the welcome screen to start or resume a match. Select **Main menu** above the game board to return to the welcome screen.
 
 You play **coral (X)** and the computer plays **gold (O)**. Each disc falls into the lowest open space in its column. Connect four horizontally, vertically, or diagonally to win. Filling all 42 spaces without a winner ends the round in a draw.
 
@@ -39,6 +39,12 @@ You play **coral (X)** and the computer plays **gold (O)**. Each disc falls into
 | Toggle move sounds | Select **Sound on** or **Sound off** in the header. |
 
 The browser saves the current round, scores, and settings on the device. Reloading the page resumes play. The board supports reduced motion and switches to an interactive pre-rendered view when WebGL 2 is unavailable.
+
+## Coach Mode
+
+Select **Coach Mode** on the welcome screen to open the practice board. The three drills cover a horizontal win, a vertical block, and the gold diagonal from the finished-game screenshot. Each position asks for one move. **Show hint** gives a clue, and **Highlight column** marks a suggested drop on the board.
+
+After a move, the coach explains the result. A missed block also shows the opponent’s winning reply. Use **Try again** to retry, **Next drill** to advance, or choose any position from **Practice drills**. The browser saves your current attempt and completed drills separately from the match scoreboard.
 
 ## Screenshots
 
@@ -71,7 +77,7 @@ The original command-line game uses Python 3 and its standard library. From the 
 | Command | What it does |
 | --- | --- |
 | `npm run typecheck` | Checks the TypeScript source without emitting JavaScript. |
-| `npm test` | Tests gravity, turn order, full columns, wins in four directions, draws, and scoring. It also runs the worker adapter with the actual Python engine to check a winning move and a forced block. |
+| `npm test` | Tests gravity, turn order, full columns, wins in four directions, draws, and scoring. It also verifies the coach drills and their saved progress, then runs the worker adapter with the actual Python engine to check a winning move and a forced block. |
 | `npm run prepare:engine` | Copies the bundled Pyodide files and `main/connect_four.py` into `public/engine/`. The development and build commands run this automatically. |
 | `npm run build` | Builds the production site and writes the static export to `out/`. |
 
@@ -106,8 +112,9 @@ The package manifest lists the direct dependencies. The lockfile records the exa
 | `app/` | Next.js page, root layout, fonts, and global styles. |
 | `components/` | Game controls, scoreboard, accessible column buttons, and the pixel landscape. |
 | `lib/game.ts` | Browser-side move validation, win detection, scoring, and saved-game state. |
+| `lib/coach.ts` | Practice positions, move assessment, hints, and practice progress. |
 | `lib/tabletop.ts` and `lib/board-view.ts` | Three.js scene and the column coordinates for the pre-rendered board. |
 | `main/connect_four.py` and `main/script.py` | Shared Python game engine and terminal entry point. |
 | `public/` and `scripts/prepare-engine.mjs` | Browser worker, board artwork, and the script that stages the Python runtime. |
-| `tests/` | Game-rule tests and the Python worker integration test. |
+| `tests/` | Game rules, coach drills, save isolation, and the Python worker integration test. |
 | `images/` | README screenshots and the original terminal demo. |

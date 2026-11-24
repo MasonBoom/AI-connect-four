@@ -36,8 +36,8 @@ function rendererForMenu() {
 }
 
 const colors = {
-  play: { face: 0xff8b7c, side: 0xa64e59, rim: 0x602f43 },
-  coach: { face: 0x403845, side: 0x332b39, rim: 0x211c27 },
+  play: { face: 0xff8b7c, hover: 0xffa190, side: 0xa64e59, rim: 0x602f43 },
+  coach: { face: 0xbfa1ed, hover: 0xd5bafc, side: 0x786090, rim: 0x493753 },
 };
 
 export function mountModeKeys(
@@ -53,7 +53,7 @@ export function mountModeKeys(
   const cursor = new Vector2();
 
   const pads = [play, coach].map((button) => {
-    const palette = button.disabled ? colors.coach : colors.play;
+    const palette = button === coach ? colors.coach : colors.play;
     const face = new MeshBasicMaterial({ color: palette.face });
     const side = new MeshBasicMaterial({ color: palette.side });
     const rim = new MeshBasicMaterial({ color: palette.rim });
@@ -61,22 +61,24 @@ export function mountModeKeys(
     const base = new Mesh(undefined, rim);
     cap.rotation.x = base.rotation.x = -0.39;
     scene.add(base, cap);
-    return { button, cap, base, face, side, rim };
+    return { button, cap, base, face, side, rim, palette };
   });
-  const [playPad] = pads;
   const surfaces = pads.flatMap(({ base, cap }) => [base, cap]);
-  let hovering = false;
+  let hovered: HTMLButtonElement | null = null;
+  let held: HTMLButtonElement | null = null;
   let heldPointer: number | null = null;
-  let releasedOnPlay = false;
+  let released: HTMLButtonElement | null = null;
   let disposed = false;
   host.appendChild(renderer.domElement);
 
   function paint() {
-    const pressed = hovering && heldPointer !== null;
-    playPad.face.color.setHex(hovering ? 0xffa190 : colors.play.face);
-    playPad.cap.position.y = playPad.base.position.y + (pressed ? 0 : 3);
-    playPad.cap.position.z = pressed ? 4 : 7;
-    keys.toggleAttribute('data-pressed', pressed);
+    for (const { button, base, cap, face, palette } of pads) {
+      const pressed = button === held && button === hovered;
+      face.color.setHex(button === hovered ? palette.hover : palette.face);
+      cap.position.y = base.position.y + (pressed ? 0 : 3);
+      cap.position.z = pressed ? 4 : 7;
+      button.toggleAttribute('data-pressed', pressed);
+    }
     renderer.render(scene, camera);
   }
 
@@ -110,44 +112,49 @@ export function mountModeKeys(
     );
     raycaster.setFromCamera(cursor, camera);
     const hit = raycaster.intersectObjects(surfaces, false)[0]?.object;
-    return pads.find(({ base, cap }) => hit === base || hit === cap)?.button;
+    return pads.find(({ base, cap }) => hit === base || hit === cap)?.button ?? null;
   }
 
   function track(event: PointerEvent) {
     if (!event.isPrimary) return;
     const hit = pick(event);
-    keys.style.cursor = hit?.disabled ? 'not-allowed' : hit ? 'pointer' : '';
-    if (hovering !== (hit === play)) {
-      hovering = hit === play;
+    keys.style.cursor = hit ? 'pointer' : '';
+    if (hovered !== hit) {
+      hovered = hit;
       paint();
     }
   }
   function press(event: PointerEvent) {
     if (!event.isPrimary || event.button !== 0) return;
-    releasedOnPlay = false;
-    if (pick(event) !== play) return;
+    released = null;
+    held = pick(event);
+    if (!held) return;
     heldPointer = event.pointerId;
-    hovering = true;
-    play.setPointerCapture(event.pointerId);
+    hovered = held;
+    held.setPointerCapture(event.pointerId);
     paint();
   }
   function release(event: PointerEvent) {
     if (event.pointerId !== heldPointer) return;
-    releasedOnPlay = pick(event) === play;
+    const hit = pick(event);
+    released = hit === held ? hit : null;
     heldPointer = null;
-    hovering = event.pointerType === 'mouse' && releasedOnPlay;
+    held = null;
+    hovered = event.pointerType === 'mouse' ? hit : null;
     paint();
   }
 
-  // Pointer clicks must begin and end on the play mesh. Keyboard and assistive
-  // activation use the native submit button without requiring a pointer.
+  // A pointer must start and finish on the same mesh. Native submission
+  // also supports keyboard and assistive technology without pointer events.
   function checkClick(event: MouseEvent) {
     if (event.detail === 0) return;
-    if (!releasedOnPlay || pick(event) !== play) event.preventDefault();
-    releasedOnPlay = false;
+    const target = event.target instanceof Element ? event.target.closest('button') : null;
+    if (!released || released !== target || pick(event) !== released) event.preventDefault();
+    released = null;
   }
   function reset() {
-    hovering = false;
+    hovered = null;
+    held = null;
     heldPointer = null;
     keys.style.cursor = '';
     paint();
@@ -161,7 +168,7 @@ export function mountModeKeys(
   keys.addEventListener('pointerup', release, listener);
   keys.addEventListener('pointercancel', (event) => {
     if (event.pointerId === heldPointer) {
-      releasedOnPlay = false;
+      released = null;
       reset();
     }
   }, listener);
@@ -170,6 +177,7 @@ export function mountModeKeys(
   const observer = new ResizeObserver(resize);
   observer.observe(host);
   observer.observe(play);
+  observer.observe(coach);
   // Revert to the native controls immediately if the browser releases the GPU.
   renderer.domElement.addEventListener('webglcontextlost', dispose, listener);
   resize();
@@ -180,9 +188,9 @@ export function mountModeKeys(
     events.abort();
     observer.disconnect();
     delete keys.dataset.rendered;
-    keys.removeAttribute('data-pressed');
     keys.style.cursor = '';
-    for (const { base, cap, face, side, rim } of pads) {
+    for (const { button, base, cap, face, side, rim } of pads) {
+      button.removeAttribute('data-pressed');
       base.geometry.dispose();
       cap.geometry.dispose();
       face.dispose();

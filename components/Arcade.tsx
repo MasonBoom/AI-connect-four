@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import {
   ArrowLeft,
-  ArrowRight,
   ChevronDown,
   CircleHelp,
   Gamepad2,
@@ -20,8 +19,8 @@ import {
 import Link from 'next/link';
 import Brand from './Brand';
 import GameBoard from './GameBoard';
+import BoardKeys from './BoardKeys';
 import {
-  COLS,
   DEPTH,
   initialState,
   loadGame,
@@ -48,12 +47,14 @@ const robot = [
   '...ppPPPppPPPpp...',
   '...ppppp..ppppp...',
 ];
+
 const robotColor: Record<string, string> = {
   p: '#9c75d1',
   P: '#d8b9ff',
   D: '#382648',
   w: '#ffdd97',
 };
+
 function PixelBot() {
   return (
     <div className="portrait" aria-hidden="true">
@@ -76,6 +77,7 @@ function PixelBot() {
     </div>
   );
 }
+
 function Token({ player }: { player: Player | 'draw' }) {
   return (
     <span aria-hidden="true" className={'token ' + (player === 'draw' ? 'draw' : player)}>
@@ -83,34 +85,7 @@ function Token({ player }: { player: Player | 'draw' }) {
     </span>
   );
 }
-function Keys() {
-  return (
-    <div className="key-legend" aria-label="Keyboard shortcuts">
-      <span className="key-icon">
-        <Keyboard size={17} /> <span>Keyboard</span>
-      </span>
-      <span>
-        <kbd>1</kbd>
-        <i>–</i>
-        <kbd>7</kbd>
-        <span>Drop disc</span>
-      </span>
-      <span>
-        <kbd aria-label="Left arrow">
-          <ArrowLeft />
-        </kbd>
-        <kbd aria-label="Right arrow">
-          <ArrowRight />
-        </kbd>
-        <span>Select</span>
-      </span>
-      <span>
-        <kbd>Enter</kbd>
-        <span>Drop</span>
-      </span>
-    </div>
-  );
-}
+
 const pad = (value: number) => String(value).padStart(2, '0');
 
 export default function Arcade() {
@@ -253,49 +228,6 @@ export default function Arcade() {
   );
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (
-        e.defaultPrevented ||
-        e.metaKey ||
-        e.ctrlKey ||
-        e.altKey ||
-        e.repeat ||
-        modal ||
-        thinking ||
-        winner
-      )
-        return;
-      const el = e.target as HTMLElement;
-      if (el.closest('input, select, textarea, [contenteditable="true"]')) return;
-      if (/^[1-7]$/.test(e.key)) {
-        e.preventDefault();
-        drop(Number(e.key) - 1);
-        return;
-      }
-      if (el.closest('button, a') && !el.closest('.column-controls')) return;
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        e.preventDefault();
-        let col = aim ?? 3;
-        if (aim !== null || nextRow(match.board, col) < 0) {
-          for (let i = 0; i < COLS; i++) {
-            col = (col + (e.key === 'ArrowRight' ? 1 : COLS - 1)) % COLS;
-            if (nextRow(match.board, col) >= 0) break;
-          }
-        }
-        setAim(col);
-        document
-          .querySelector<HTMLButtonElement>('button[data-column="' + col + '"]')
-          ?.focus({ preventScroll: true });
-      } else if (e.key === 'Enter' && aim !== null && !el.closest('.column-controls')) {
-        e.preventDefault();
-        drop(aim);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [aim, drop, match.board, modal, thinking, winner]);
-
-  useEffect(() => {
     const el = dialog.current;
     if (modal && el && !el.open) el.showModal();
     else if (!modal && el?.open) el.close();
@@ -398,7 +330,13 @@ export default function Arcade() {
                 {active ? 'In play' : 'Finished'}
               </span>
             </div>
-            <GameBoard match={match} aim={aim} setAim={setAim} drop={drop} />
+            <GameBoard
+              match={match}
+              aim={aim}
+              setAim={setAim}
+              drop={drop}
+              inputPlayer={hydrated && !modal ? 'X' : null}
+            />
             <div className="board-status">
               <div className="status-group" role="status" aria-live="polite" aria-atomic="true">
                 <Token player={winner ?? turn} />
@@ -491,7 +429,7 @@ export default function Arcade() {
             </section>
           </aside>
         </div>
-        <Keys />
+        <BoardKeys />
       </main>
       <dialog
         ref={dialog}

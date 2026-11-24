@@ -2,6 +2,7 @@
   width: min(1184px, calc(100% - 88px));
   margin: clamp(28px, 5.5vh, 64px) auto;
 }
+
 .cabinet {
   overflow: hidden;
   border: 1px solid #57465d;
@@ -9,6 +10,7 @@
   background: #26202c;
   box-shadow: 0 4px 0 #100e16, 0 18px 64px #100c174d;
 }
+
 .welcome-scene {
   position: relative;
   isolation: isolate;
@@ -18,6 +20,7 @@
   overflow: hidden;
   background: linear-gradient(#30213e, #76455e 62%, #302237);
 }
+
 .welcome-scene::after {
   content: '';
   position: absolute;
@@ -25,6 +28,7 @@
   background: linear-gradient(90deg, #20182af5 4%, #241a2be8 29%, #291c2e94 48%, transparent 66%);
   pointer-events: none;
 }
+
 .welcome-board {
   position: absolute;
   width: min(55%, 625px);
@@ -33,17 +37,20 @@
   aspect-ratio: 1240 / 778;
   pointer-events: none;
 }
+
 .welcome-board > img {
   display: block;
   width: 100%;
   height: 100%;
 }
+
 .welcome-copy {
   position: relative;
   z-index: 1;
   width: 54%;
   padding: 30px 0 32px clamp(26px, 5vw, 66px);
 }
+
 .welcome-greeting {
   margin: 0 0 20px;
   color: #ddbcff;
@@ -51,13 +58,16 @@
   text-transform: uppercase;
   letter-spacing: 0.11em;
 }
+
 .welcome-copy h1 {
   font-size: clamp(38px, 4.65vw, 66px);
   line-height: 1.13;
   letter-spacing: -0.055em;
   text-shadow: 0 5px #6d465b;
 }
+
 .welcome-copy h1 span { display: block; }
+
 .welcome-intro {
   max-width: 32ch;
   margin: 22px 0 0;
@@ -65,11 +75,13 @@
   line-height: 1.5;
   color: #e8d8e4;
 }
+
 .mode-deck {
   padding: clamp(16px, 2.4vw, 30px);
   border-top: 1px solid #59455a;
   background: linear-gradient(#302834, #241f29);
 }
+
 .mode-keys {
   position: relative;
   isolation: isolate;
@@ -77,6 +89,7 @@
   grid-template-columns: 1fr 1fr;
   gap: clamp(10px, 1.6vw, 20px);
 }
+
 .mode-surface, .mode-surface > * {
   position: absolute;
   inset: 0;
@@ -84,7 +97,7 @@
   width: 100%;
   height: 100%;
 }
-/* SVGRenderer clears its surface with an inline background. The deck shows through the gaps. */
+
 .mode-surface > svg { background-color: transparent !important; }
 .mode-surface { pointer-events: none; touch-action: manipulation; }
 .mode-key {
@@ -104,23 +117,27 @@
   box-shadow: inset 0 -6px #a64e59, inset 0 1px #ffc1a4;
   touch-action: manipulation;
 }
+
 .play-key:hover { background: #ffa190; }
+
 .coach-key {
-  background: #403845;
-  border-color: #211c27;
-  color: #d7c9d9;
-  box-shadow: inset 0 -6px #332b39, inset 0 1px #544957;
-  cursor: not-allowed;
-  opacity: 1;
+  background: #bfa1ed;
+  border-color: #493753;
+  color: #2a1d39;
+  box-shadow: inset 0 -6px #786090, inset 0 1px #e3ceff;
 }
+
+.coach-key:hover { background: #d5bafc; }
+
 .mode-keys[data-rendered] .mode-key {
   border-color: transparent;
   background: transparent;
   box-shadow: none;
   cursor: inherit;
 }
+
 .mode-key:focus-visible { outline: 3px solid #fff2c9; outline-offset: 2px; }
-.mode-keys[data-pressed] .play-key > *, .play-key:active > * { translate: 0 3px; }
+.mode-key[data-pressed] > *, .mode-key:active > * { translate: 0 3px; }
 .key-symbol {
   flex: none;
   width: clamp(36px, 3.5vw, 47px);
@@ -131,14 +148,15 @@
   border: 1px solid #813b4a55;
   border-radius: 8px;
 }
+
 .key-symbol svg { width: 52%; height: 52%; stroke-width: 2; }
-.coach-key .key-symbol { background: #2f2835; border-color: #66596b; color: #c5afce; }
+.coach-key .key-symbol { background: #7855972b; border-color: #75578d80; color: #372345; }
 .key-copy { display: grid; min-width: 0; gap: 6px; }
 .key-copy strong { font: 700 clamp(18px, 1.9vw, 26px)/1.1 var(--body); letter-spacing: -0.035em; }
 .key-copy small { font: 500 12px/1.25 var(--mono); }
-.coach-key small { color: #c6b7ca; }
+.coach-key small { color: #382644; }
 .key-end { flex: none; width: 20px; height: 20px; margin-left: auto; }
-.coach-key .key-end { width: 17px; color: #c2afca; }
+
 @media (min-width: 711px) {
   .welcome-scene > .landscape {
     left: auto;
@@ -149,9 +167,11 @@
     mask-image: linear-gradient(90deg, transparent, #000 22%);
   }
 }
+
 @media (max-width: 1050px) {
   .welcome-shell { width: calc(100% - 48px); }
 }
+
 @media (max-width: 710px) {
   .welcome-shell { width: min(590px, calc(100% - 28px)); margin: 22px auto; }
   .welcome-scene { align-items: flex-start; min-height: 0; }
@@ -170,8 +190,8 @@
   .key-copy strong { font-size: 20px; }
   .key-copy small { font-size: 11px; }
 }
+
 @media (forced-colors: active) {
   .mode-keys .mode-surface { display: none; }
   .mode-keys[data-rendered] .mode-key { pointer-events: auto; border: 2px solid ButtonText; }
-  .mode-keys[data-rendered] .coach-key { border-color: GrayText; }
 }

@@ -301,11 +301,14 @@ export function createTabletop(
   };
   function updateAim() {
     const row =
-      currentMatch && aimCol !== null && !currentMatch.winner && currentMatch.turn === 'X'
+      currentMatch && aimCol !== null && !currentMatch.winner
         ? nextRow(currentMatch.board, aimCol)
         : -1;
     aim.visible = row >= 0;
-    if (aim.visible) aim.position.set(px(aimCol!), py(row), discZ + 0.1);
+    if (aim.visible) {
+      aim.material.color.set(currentMatch?.turn === 'O' ? '#ffe3a1' : '#ffb4a8');
+      aim.position.set(px(aimCol!), py(row), discZ + 0.1);
+    }
     invalidate();
   }
   const setMatch = (match: Match, animate: boolean) => {

@@ -13,7 +13,9 @@ export const metadata: Metadata = {
     'Drop a disc and challenge the original minimax AI on a three-dimensional Connect Four board.',
   icons: { icon: '/arcade.svg' },
 };
+
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#181420' };
+
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
