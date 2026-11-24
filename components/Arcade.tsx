@@ -17,6 +17,8 @@ import {
   VolumeX,
   X as Close,
 } from 'lucide-react';
+import Link from 'next/link';
+import Brand from './Brand';
 import GameBoard from './GameBoard';
 import {
   COLS,
@@ -71,22 +73,6 @@ function PixelBot() {
           ),
         )}
       </svg>
-    </div>
-  );
-}
-function Brand() {
-  return (
-    <div className="brand" aria-label="Fourfold Arcade">
-      <div className="brand-mark" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-        <i />
-      </div>
-      <div className="brand-words">
-        <strong>FOURFOLD</strong>
-        <span>ARCADE</span>
-      </div>
     </div>
   );
 }
@@ -379,10 +365,10 @@ export default function Arcade() {
       <main className="shell">
         <div className="intro">
           <div>
-            <div className="mode-label">
-              <Gamepad2 size={16} />
-              <span>Single player</span>
-            </div>
+            <Link className="mode-label back-to-menu" href="/">
+              <ArrowLeft size={16} />
+              Main menu
+            </Link>
             <h1>
               CONNECT <span>FOUR</span>
             </h1>

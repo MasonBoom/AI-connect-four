@@ -1077,3 +1077,10 @@ kbd svg {
     animation: none !important;
   }
 }
+
+.back-to-menu {
+  width: fit-content;
+  text-decoration: none;
+}
+.back-to-menu:hover { color: var(--ink); }
+.back-to-menu:focus-visible { outline: 2px solid #ffdfad; outline-offset: 4px; }

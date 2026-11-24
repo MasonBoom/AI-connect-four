@@ -2,6 +2,8 @@
 
 Play Connect Four against a Python minimax opponent on an animated Three.js board. The browser runs the same Python engine as the original terminal game. A background worker searches for the computer’s next move while the board stays interactive.
 
+Live link: https://wonderful-longma-ce8692.netlify.app/
+
 [Quick start](#quick-start) · [Screenshots](#screenshots) · [Technology stack](#technology-stack)
 
 ## Quick start
@@ -23,6 +25,8 @@ npm run dev
 Open [localhost:3000](http://localhost:3000). The app serves its own fonts, Python engine, and WebAssembly runtime. A local Python installation is only needed for the optional terminal version or the Python preview command below.
 
 ## How to play
+
+Select **Play Connect Four** on the welcome screen to start or resume a match. **Coach Mode** is marked *Coming soon*. Select **Main menu** above the game board to return to the welcome screen.
 
 You play **coral (X)** and the computer plays **gold (O)**. Each disc falls into the lowest open space in its column. Connect four horizontally, vertically, or diagonally to win. Filling all 42 spaces without a winner ends the round in a draw.
 
