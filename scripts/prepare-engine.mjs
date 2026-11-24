@@ -7,6 +7,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const require = createRequire(import.meta.url);
 const runtime = dirname(require.resolve('pyodide/pyodide.js'));
 const target = join(root, 'public', 'engine');
+
 const files = [
   'pyodide.js',
   'pyodide.asm.js',
@@ -14,6 +15,7 @@ const files = [
   'pyodide-lock.json',
   'python_stdlib.zip',
 ];
+
 await mkdir(target, { recursive: true });
 await Promise.all([
   ...files.map((file) => copyFile(join(runtime, file), join(target, file))),

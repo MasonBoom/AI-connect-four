@@ -5,4 +5,5 @@ const config = {
   devIndicators: false,
   reactStrictMode: true,
 };
+
 export default config;

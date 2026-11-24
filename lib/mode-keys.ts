@@ -124,6 +124,7 @@ export function mountModeKeys(
       paint();
     }
   }
+
   function press(event: PointerEvent) {
     if (!event.isPrimary || event.button !== 0) return;
     released = null;
@@ -134,6 +135,7 @@ export function mountModeKeys(
     held.setPointerCapture(event.pointerId);
     paint();
   }
+
   function release(event: PointerEvent) {
     if (event.pointerId !== heldPointer) return;
     const hit = pick(event);
@@ -152,6 +154,7 @@ export function mountModeKeys(
     if (!released || released !== target || pick(event) !== released) event.preventDefault();
     released = null;
   }
+
   function reset() {
     hovered = null;
     held = null;
@@ -166,14 +169,18 @@ export function mountModeKeys(
   keys.addEventListener('pointermove', track, listener);
   keys.addEventListener('pointerdown', press, listener);
   keys.addEventListener('pointerup', release, listener);
+
   keys.addEventListener('pointercancel', (event) => {
     if (event.pointerId === heldPointer) {
       released = null;
       reset();
     }
   }, listener);
+
   keys.addEventListener('pointerleave', () => { if (heldPointer === null) reset(); }, listener);
+
   keys.addEventListener('lostpointercapture', () => { if (heldPointer !== null) reset(); }, listener);
+
   const observer = new ResizeObserver(resize);
   observer.observe(host);
   observer.observe(play);
@@ -203,5 +210,6 @@ export function mountModeKeys(
     }
     renderer.domElement.remove();
   }
+
   return dispose;
 }

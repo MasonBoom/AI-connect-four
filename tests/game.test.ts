@@ -41,11 +41,14 @@ test('a full winning-free board is a draw on the 42nd move', () => {
   assert.equal(round(...cols.slice(0, -1)).winner, null);
   assert.equal(round(...cols).winner, 'draw');
 });
+
 test('a win increments its score once and the next starter applies on restart', () => {
   let state = initialState();
+
   const move = (col: number) => {
     state = reducer(state, { type: 'move', player: state.match.turn, col });
   };
+
   for (const col of [0, 6, 1, 6, 2, 5, 3]) move(col);
   move(1);
   assert.deepEqual(state.scores, { X: 1, O: 0, draw: 0 });
@@ -57,6 +60,7 @@ test('a win increments its score once and the next starter applies on restart', 
   assert.equal(state.round, 2);
   assert.equal(state.scores.X, 1);
 });
+
 test('menu changes do not discard an active board', () => {
   const match: Match = round(2, 1);
   let state = { ...initialState(), match };

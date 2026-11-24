@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 
 export default function Landscape() {
   const ref = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     const ctx = ref.current?.getContext('2d');
     if (!ctx) return;
@@ -30,10 +31,12 @@ export default function Landscape() {
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, w, horizon);
     let seed = 9087;
+
     const next = () => {
       seed = (seed * 1664525 + 1013904223) >>> 0;
       return seed / 4294967296;
     };
+
     for (let i = 0; i < 120; i++) {
       const x = Math.floor(next() * w),
         y = Math.floor(next() * 186);
@@ -76,6 +79,7 @@ export default function Landscape() {
     }
 
     type Ridge = [number, number][];
+
     const range = (ridge: Ridge, fill: string, lit: string, shade: string) => {
       const profile: number[] = [];
       for (let i = 0; i < ridge.length - 1; i++) {
@@ -104,6 +108,7 @@ export default function Landscape() {
         }
       }
     };
+
     range(
       [
         [0, 172],
@@ -251,5 +256,6 @@ export default function Landscape() {
     ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, w, h);
   }, []);
+
   return <canvas ref={ref} width={640} height={360} className="landscape" aria-hidden="true" />;
 }

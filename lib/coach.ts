@@ -99,6 +99,7 @@ export function tryDrop(state: Practice, col: number): Practice {
 }
 
 const sessionKey = 'fourfold.coach.v1';
+
 const solvedKey = (id: DrillId) => sessionKey + '.solved.' + id;
 
 export function savePractice(storage: Pick<Storage, 'setItem'>, state: Practice) {

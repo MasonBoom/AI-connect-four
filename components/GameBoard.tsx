@@ -19,11 +19,13 @@ type Props = {
 function FallbackBoard({ match, aim }: Pick<Props, 'match' | 'aim'>) {
   const previousCount = useRef(match.moves.length);
   const [lastDrop, setLastDrop] = useState<number | null>(null);
+
   useLayoutEffect(() => {
     const count = match.moves.length;
     setLastDrop(count === previousCount.current + 1 ? count - 1 : null);
     previousCount.current = count;
   }, [match.moves.length]);
+
   const targetRow =
     aim !== null ? nextRow(match.board, aim) : -1;
   const target = aim !== null && targetRow >= 0 ? projectedCell(aim, targetRow) : null;
@@ -79,18 +81,22 @@ export default function GameBoard({
   const latest = useRef({ match, aim: preview });
   const previous = useRef(match);
   const [areas, setAreas] = useState<ColumnArea[] | null>(null);
+
   // Keep an already-playable board on screen while the GPU module loads.
   useEffect(() => {
     latest.current = { match, aim: preview };
   }, [match, preview]);
+
   useEffect(() => {
     let active = true;
+
     const fallback = () => {
       if (!active) return;
       stage.current?.dispose();
       stage.current = null;
       setAreas(null);
     };
+
     import('../lib/tabletop')
       .then(({ createTabletop }) => {
         if (!active || !host.current) return;
@@ -106,22 +112,26 @@ export default function GameBoard({
         table.setAim(latest.current.aim);
       })
       .catch(fallback);
+
     return () => {
       active = false;
       stage.current?.dispose();
       stage.current = null;
     };
   }, []);
+
   useEffect(() => {
     stage.current?.setMatch(match, previous.current.moves.length + 1 === match.moves.length);
     previous.current = match;
   }, [match]);
+
   useEffect(() => {
     stage.current?.setAim(preview);
   }, [preview]);
 
   useEffect(() => {
     if (!canDrop) return;
+
     function onKey(event: KeyboardEvent) {
       if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || event.repeat) return;
       const target = event.target;
@@ -151,9 +161,12 @@ export default function GameBoard({
         drop(preview);
       }
     }
+
     window.addEventListener('keydown', onKey);
+
     return () => window.removeEventListener('keydown', onKey);
   }, [aim, canDrop, drop, match.board, preview, setAim]);
+
   return (
     <div className="stage" aria-label="Connect Four board">
       <Landscape />

@@ -2,18 +2,24 @@ import * as T from 'three';
 import { COLS, ROWS, nextRow, type Match, type Player } from './game';
 
 export type ColumnArea = { left: number; top: number; width: number; height: number };
+
 export type Tabletop = {
   setMatch: (match: Match, animate: boolean) => void;
   setAim: (column: number | null) => void;
   dispose: () => void;
 };
+
 const px = (col: number) => (col - 3) * 1.02;
+
 const py = (row: number) => 1.03 + (5 - row) * 0.92;
+
 const discZ = 0.29;
+
 const materials = {
   X: '#ff635c',
   O: '#ffc45a',
 };
+
 function rounded(x: number, y: number, w: number, h: number, r: number) {
   const s = new T.Shape();
   s.moveTo(x + r, y);
@@ -60,10 +66,13 @@ export function createTabletop(
   const rim = new T.DirectionalLight('#bd97ff', 1.25);
   rim.position.set(5, 5, -3);
   scene.add(rim);
+
   const standard = (color: string, roughness = 0.42, metalness = 0.11) =>
     new T.MeshStandardMaterial({ color, roughness, metalness });
+
   const rack = new T.Group();
   scene.add(rack);
+
   function extrusion(
     shape: T.Shape,
     depth: number,
@@ -86,6 +95,7 @@ export function createTabletop(
     parent.add(mesh);
     return mesh;
   }
+
   // A second, dark plate closes the wells behind the actual perforated face.
   const back = standard('#2c203e', 0.85, 0.015);
   extrusion(rounded(-3.69, 0.47, 7.38, 5.72, 0.18), 0.15, 0.055, back, rack, -0.4);
@@ -191,6 +201,7 @@ export function createTabletop(
   const inset = { X: standard('#c74e54', 0.44, 0.1), O: standard('#e69a3c', 0.44, 0.1) };
   const outerRing = new T.TorusGeometry(0.332, 0.014, 8, 52);
   const innerRing = new T.TorusGeometry(0.258, 0.009, 6, 52);
+
   function chip(player: Player) {
     const group = new T.Group();
     group.add(new T.Mesh(tokenGeometry, body[player]));
@@ -202,6 +213,7 @@ export function createTabletop(
     group.add(low);
     return group;
   }
+
   function spare(
     player: Player,
     x: number,
@@ -216,6 +228,7 @@ export function createTabletop(
     g.scale.setScalar(size);
     scene.add(g);
   }
+
   for (let i = 0; i < 4; i++)
     spare('X', -4.29 + (i % 2) * 0.034, 0.105 + i * 0.139, 0.71, [-Math.PI / 2, 0, 0.12 * i], 1.18);
   spare('X', -4.83, 0.44, 0.99, [-0.24, -0.29, -0.23], 1.25);
@@ -240,6 +253,7 @@ export function createTabletop(
     depthWrite: false,
   });
   const shadowGeo = new T.PlaneGeometry(1, 1);
+
   function shadow(x: number, z: number, w: number, d: number) {
     const m = new T.Mesh(shadowGeo, shadowMaterial);
     m.rotation.x = -Math.PI / 2;
@@ -248,6 +262,7 @@ export function createTabletop(
     m.renderOrder = -1;
     scene.add(m);
   }
+
   shadow(0, -0.04, 10.1, 4.7);
   shadow(-4.51, 0.75, 2.2, 2.4);
   shadow(4.58, 0.81, 2.4, 2.1);
@@ -279,6 +294,7 @@ export function createTabletop(
   let raf = 0,
     stopped = false;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
   function render(now = performance.now()) {
     raf = 0;
     if (stopped) return;
@@ -296,9 +312,11 @@ export function createTabletop(
     renderer.render(scene, camera);
     if (animation) raf = requestAnimationFrame(render);
   }
+
   const invalidate = () => {
     if (!raf && !stopped) raf = requestAnimationFrame(render);
   };
+
   function updateAim() {
     const row =
       currentMatch && aimCol !== null && !currentMatch.winner
@@ -311,6 +329,7 @@ export function createTabletop(
     }
     invalidate();
   }
+
   const setMatch = (match: Match, animate: boolean) => {
     if (animation) {
       animation.group.position.y = animation.to;
@@ -354,6 +373,7 @@ export function createTabletop(
     currentMatch = match;
     updateAim();
   };
+
   function resize() {
     const w = host.clientWidth,
       h = host.clientHeight;
@@ -365,10 +385,12 @@ export function createTabletop(
     camera.left = -camera.right;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
+
     const project = (x: number, y: number, z: number) => {
       const p = new T.Vector3(x, y, z).project(camera);
       return { x: (p.x + 1) * 50, y: (1 - p.y) * 50 };
     };
+
     onLayout(
       Array.from({ length: COLS }, (_, col) => {
         const upper = project(px(col) - 0.51, 6.77, 0.43),
@@ -378,20 +400,25 @@ export function createTabletop(
     );
     invalidate();
   }
+
   const observer = new ResizeObserver(resize);
   observer.observe(host);
   resize();
+
   const lost = (event: Event) => {
     event.preventDefault();
     onLost();
   };
+
   canvas.addEventListener('webglcontextlost', lost);
   return {
     setMatch,
+
     setAim(column) {
       aimCol = column;
       updateAim();
     },
+
     dispose() {
       stopped = true;
       cancelAnimationFrame(raf);

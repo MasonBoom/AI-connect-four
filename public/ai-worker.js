@@ -1,4 +1,5 @@
 let enginePromise;
+
 function loadEngine() {
   if (!enginePromise) {
     enginePromise = (async () => {
@@ -29,6 +30,7 @@ function loadEngine() {
   }
   return enginePromise;
 }
+
 self.onmessage = async ({ data }) => {
   try {
     const choose = await loadEngine();

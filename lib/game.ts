@@ -8,6 +8,7 @@ export type Move = Point & { player: Player };
 export type Difficulty = 'Easy' | 'Normal' | 'Hard';
 export const DEPTH: Record<Difficulty, number> = { Easy: 2, Normal: 4, Hard: 5 };
 export type Score = Record<Player | 'draw', number>;
+
 export type Match = {
   board: Board;
   moves: Move[];
@@ -16,6 +17,7 @@ export type Match = {
   winner: Player | 'draw' | null;
   line: Point[];
 };
+
 export type State = {
   match: Match;
   scores: Score;
@@ -124,6 +126,7 @@ export function reducer(state: State, action: Action): State {
 }
 
 const STORAGE_KEY = 'fourfold.arcade.v1';
+
 export function saveGame(state: State) {
   const { first, round, difficulty, scores, sound, match } = state;
   localStorage.setItem(
@@ -144,7 +147,9 @@ export function loadGame(): State {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return initialState();
   const data = JSON.parse(raw);
+
   const isPlayer = (v: unknown) => v === 'X' || v === 'O';
+
   if (
     !data ||
     !isPlayer(data.first) ||

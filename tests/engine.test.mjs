@@ -12,16 +12,20 @@ test('the worker returns legal zero-based columns for a win and a forced block',
   const replies = [];
   const self = {
     location: { href: 'https://test.invalid/ai-worker.js' },
+
     postMessage: (message) => replies.push(message),
   };
   const context = {
     self,
     URL,
+
     importScripts: (url) => assert.equal(url, 'https://test.invalid/engine/pyodide.js'),
+
     fetch: async (url) => {
       assert.equal(url, 'https://test.invalid/engine/connect_four.py');
       return { ok: true, text: async () => payload };
     },
+
     loadPyodide: () => loadPyodide(),
   };
   vm.runInNewContext(worker, context);

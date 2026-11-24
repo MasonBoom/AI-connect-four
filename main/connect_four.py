@@ -217,6 +217,7 @@ def minimax(input_board, is_maximizing, depth, alpha, beta, eval_function):
       if alpha >= beta:
         break
     return [best_value, best_move]
+
 def evaluate_board(board):
     if has_won(board, "X"):
         return float("Inf")

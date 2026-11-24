@@ -99,7 +99,9 @@
 }
 
 .mode-surface > svg { background-color: transparent !important; }
+
 .mode-surface { pointer-events: none; touch-action: manipulation; }
+
 .mode-key {
   position: relative;
   display: flex;
@@ -137,7 +139,9 @@
 }
 
 .mode-key:focus-visible { outline: 3px solid #fff2c9; outline-offset: 2px; }
+
 .mode-key[data-pressed] > *, .mode-key:active > * { translate: 0 3px; }
+
 .key-symbol {
   flex: none;
   width: clamp(36px, 3.5vw, 47px);
@@ -150,11 +154,17 @@
 }
 
 .key-symbol svg { width: 52%; height: 52%; stroke-width: 2; }
+
 .coach-key .key-symbol { background: #7855972b; border-color: #75578d80; color: #372345; }
+
 .key-copy { display: grid; min-width: 0; gap: 6px; }
+
 .key-copy strong { font: 700 clamp(18px, 1.9vw, 26px)/1.1 var(--body); letter-spacing: -0.035em; }
+
 .key-copy small { font: 500 12px/1.25 var(--mono); }
+
 .coach-key small { color: #382644; }
+
 .key-end { flex: none; width: 20px; height: 20px; margin-left: auto; }
 
 @media (min-width: 711px) {
@@ -174,24 +184,38 @@
 
 @media (max-width: 710px) {
   .welcome-shell { width: min(590px, calc(100% - 28px)); margin: 22px auto; }
+
   .welcome-scene { align-items: flex-start; min-height: 0; }
+
   .welcome-scene::after {
     background: linear-gradient(180deg, #261b2fdc, #281d3080 32%, transparent 60%);
   }
+
   .welcome-copy { width: 100%; padding: 24px 22px clamp(184px, 44vw, 248px); }
+
   .welcome-greeting { font-size: 11px; margin-bottom: 12px; }
+
   .welcome-copy h1 { font-size: clamp(22px, 6.35vw, 36px); }
+
   .welcome-copy h1 span { display: inline; }
+
   .welcome-intro { font-size: 15px; margin: 11px 0 0; max-width: 35ch; }
+
   .welcome-board { width: min(95%, 390px); bottom: 0; right: 50%; transform: translateX(50%); }
+
   .mode-keys { grid-template-columns: 1fr; gap: 8px; }
+
   .mode-deck { padding: 12px; }
+
   .mode-key { min-height: 75px; padding: 8px 18px 13px; }
+
   .key-copy strong { font-size: 20px; }
+
   .key-copy small { font-size: 11px; }
 }
 
 @media (forced-colors: active) {
   .mode-keys .mode-surface { display: none; }
+
   .mode-keys[data-rendered] .mode-key { pointer-events: auto; border: 2px solid ButtonText; }
 }

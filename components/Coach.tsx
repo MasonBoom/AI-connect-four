@@ -30,6 +30,7 @@ export default function Coach() {
     } catch { /* Practice also works when browser storage is blocked. */ }
     setReady(true);
   }, []);
+
   useEffect(() => {
     if (!ready) return;
     try {
@@ -38,10 +39,14 @@ export default function Coach() {
   }, [practice, ready]);
 
   const drill = drillById(practice.drillId);
+
   const opening = useMemo(() => openingPosition(drill), [drill]);
+
   const { attempted, completed } = practice;
+
   const attempt = useMemo(() => attempted === null ? null : assessDrop(drill, opening, attempted),
     [drill, opening, attempted]);
+
   const clueColumn = hintLevel === 2 && !attempt ? suggestedColumn(drill, opening) : null;
   const player = colors[opening.turn];
   const nextDrill = drills.find((item) => !completed.includes(item.id));

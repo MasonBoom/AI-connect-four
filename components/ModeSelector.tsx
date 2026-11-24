@@ -20,6 +20,7 @@ export default function ModeSelector() {
         }
       })
       .catch(() => { /* Keep the native buttons if the renderer is unavailable. */ });
+
     return () => {
       active = false;
       dispose?.();

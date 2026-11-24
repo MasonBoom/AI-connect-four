@@ -112,6 +112,7 @@ export default function Arcade() {
     }
     setHydrated(true);
   }, []);
+
   useEffect(() => {
     if (hydrated)
       try {
@@ -120,6 +121,7 @@ export default function Arcade() {
         /* Play still works with storage disabled. */
       }
   }, [state, hydrated]);
+
   useEffect(() => {
     return () => {
       worker.current?.terminate();
@@ -127,6 +129,7 @@ export default function Arcade() {
       if (audio.current) void audio.current.close().catch(() => {});
     };
   }, []);
+
   const getWorker = useCallback(() => {
     if (!worker.current)
       worker.current = new Worker(new URL('/ai-worker.js', window.location.origin), {
@@ -134,6 +137,7 @@ export default function Arcade() {
       });
     return worker.current;
   }, []);
+
   useEffect(() => {
     if (!hydrated) return;
     const timer = window.setTimeout(() => {
@@ -143,8 +147,10 @@ export default function Arcade() {
         /* The next move exposes a retry. */
       }
     }, 350);
+
     return () => clearTimeout(timer);
   }, [hydrated, getWorker]);
+
   useEffect(() => {
     setAiError(false);
     if (!hydrated || match.winner || match.turn !== 'O') return;
@@ -152,9 +158,11 @@ export default function Arcade() {
     let engine: Worker;
     let timer: ReturnType<typeof setTimeout>;
     const start = performance.now();
+
     const fail = () => {
       setAiError(true);
     };
+
     const receive = (event: MessageEvent<{ id: number; col?: number; error?: string }>) => {
       if (event.data.id !== id) return;
       const col = event.data.col;
@@ -167,6 +175,7 @@ export default function Arcade() {
         Math.max(0, 510 - (performance.now() - start)),
       );
     };
+
     try {
       engine = getWorker();
       engine.addEventListener('message', receive);
@@ -175,6 +184,7 @@ export default function Arcade() {
     } catch {
       fail();
     }
+
     return () => {
       clearTimeout(timer);
       engine?.removeEventListener('message', receive);
@@ -190,7 +200,9 @@ export default function Arcade() {
       /* Browsers without Web Audio can still play. */
     }
   }, []);
+
   const seenMoves = useRef(0);
+
   useEffect(() => {
     const previous = seenMoves.current;
     seenMoves.current = moves.length;
@@ -212,11 +224,13 @@ export default function Arcade() {
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now + 0.16);
+
     osc.onended = () => {
       osc.disconnect();
       gain.disconnect();
     };
   }, [moves, state.sound]);
+
   const drop = useCallback(
     (col: number) => {
       if (!hydrated || modal || match.winner || match.turn !== 'X' || nextRow(match.board, col) < 0)
@@ -232,6 +246,7 @@ export default function Arcade() {
     if (modal && el && !el.open) el.showModal();
     else if (!modal && el?.open) el.close();
   }, [modal]);
+
   function startRound() {
     if (thinking) {
       worker.current?.terminate();
@@ -242,11 +257,13 @@ export default function Arcade() {
     dispatch({ type: 'new' });
     setModal(null);
   }
+
   function retryMove() {
     worker.current?.terminate();
     worker.current = null;
     setRetry((n) => n + 1);
   }
+
   const status =
     winner === 'draw'
       ? 'Round drawn'
