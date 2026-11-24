@@ -68,10 +68,6 @@ React sends the board and search depth to a dedicated Web Worker. The worker loa
 
 Each move in the search is one disc dropped by one player.
 
-## Run the terminal game
-
-The original command-line game uses Python 3 and its standard library. From the project root, run `py -3 main/script.py` on Windows or `python3 main/script.py` on macOS or Linux. You move first as X. Enter a column from 1 to 7 at each prompt. [Watch the terminal demo](images/connect4gif.gif).
-
 ## Tests and production build
 
 | Command | What it does |
