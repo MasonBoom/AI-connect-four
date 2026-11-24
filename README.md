@@ -2,6 +2,8 @@
 
 Play Connect Four against a Python minimax opponent on an animated Three.js board. The browser runs the same Python engine as the original terminal game. A background worker searches for the computer’s next move while the board stays interactive.
 
+Live link: https://wonderful-longma-ce8692.netlify.app/
+
 [Quick start](#quick-start) · [Screenshots](#screenshots) · [Technology stack](#technology-stack)
 
 ## Quick start
